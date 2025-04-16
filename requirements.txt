@@ -1,3 +1,4 @@
 streamlit
 pymongo
 pandas
+streamlit_scrollable_textbox

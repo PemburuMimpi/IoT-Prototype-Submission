@@ -12,17 +12,41 @@ collection = db["AudioCollection"]
 
 # Judul Halaman
 st.set_page_config(page_title="DREAMSYNC'S Ringkasan Audio AI", layout="centered")
+
+# === Custom CSS ===
+st.markdown("""
+    <style>
+    html, body, [class*="css"] {
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .info-card {
+        background-color: #f0f2f6;
+        border-left: 5px solid #4a90e2;
+        padding: 10px 20px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+    }
+    .scroll-box {
+        overflow-y: scroll;
+        height: 250px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.title("DREAMSYNC'S Summaries!:open_book:")
-st.markdown("*Sensor:* INMP441 | *Transkrip:* Whisper | *Ringkasan:* Gemini AI")
+st.markdown("*Sensor:* INMP441 | *Transkrip:* Whisper | *Ringkasan:* Gemini AI"  | *Fact Check :* Hugging Face T5")
 
 # Ambil data dari MongoDB
 docs = list(collection.find().sort("timestamp", -1))
 
-
 if not docs:
-    st.warning("Belum ada data di database")
+    st.warning("🚫 Belum ada data di database")
 else:
-    st.header("💻Data from MongoDB")
+    st.header("💻 Data Rekaman")
 
     # untuk memilih audio
     filenames = [doc['filename'] for doc in docs]
@@ -33,7 +57,7 @@ else:
     if selected_doc:
         st.markdown(f"🕒 Timestamp: {selected_doc['timestamp']}")
         st.markdown(f"📝Ringkasan: {selected_doc['filename']}")
-        st.markdown(f"Link Audio: {selected_doc['drive_url']}")
+        st.markdown(f"🎧Link Audio: {selected_doc['drive_url']}")
 
         # === Embed audio file dari Google Drive (pake base64) ===
         drive_url = selected_doc['drive_url']
@@ -53,11 +77,11 @@ else:
             st.error(f"Detail error: {e}")
 
         st.markdown("---")
-        st.subheader("Transkrip")
+        st.subheader("📜Transkrip")
         st.write(selected_doc['transcript'])
 
         st.markdown("---")
-        st.subheader("Ringkasan")
+        st.subheader("📝Ringkasan")
         st.markdown(
             f"""
             <div style='overflow-y: scroll; height: 250px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9'>
@@ -68,8 +92,8 @@ else:
         )
         
         st.markdown("---")
-        st.subheader("Hasil Fact Check")
+        st.subheader("❌✅ Hasil Fact Check")
         for item in selected_doc['fact_check']:
-            st.markdown(f"*Claim:* {item['claim']}")
+            st.markdown(f"* 👉 Claim:* {item['claim']}")
             st.markdown(f"> 💡 {item['explanation']}")
             st.markdown("---")

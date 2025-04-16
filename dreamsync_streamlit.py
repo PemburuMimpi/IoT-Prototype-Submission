@@ -1,7 +1,6 @@
 import streamlit as st # untuk streamlit
 from pymongo import MongoClient #untuk MongoDB
 import pandas as pd # memanipulasi/analisis data
-import streamlit_scrollable_textbox as stx
 
 # Setup MongoDB
 MONGO_API_KEY = st.secrets["MONGO_API_KEY"]
@@ -41,10 +40,14 @@ else:
 
         st.markdown("---")
         st.subheader("Ringkasan")
-        stx.scrollableTextbox( 
-            selected_doc['summary'],
-            height=250,           # tinggi kotaknya
-            border=True)
+        st.markdown(
+            f"""
+            <div style='overflow-y: scroll; height: 250px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9'>
+                {selected_doc['summary']}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         
         st.markdown("---")
         st.subheader("Hasil Fact Check")

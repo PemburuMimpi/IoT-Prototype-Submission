@@ -38,7 +38,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.title("DREAMSYNC'S Summaries!:open_book:")
-st.markdown("*Sensor:* INMP441 | *Transkrip:* Whisper | *Ringkasan:* Gemini AI"  | *Fact Check :* Hugging Face T5")
+st.markdown("*Sensor:* INMP441 | *Transkrip:* Whisper | *Ringkasan:* Gemini AI  | *Fact Check :* Hugging Face T5")
 
 # Ambil data dari MongoDB
 docs = list(collection.find().sort("timestamp", -1))

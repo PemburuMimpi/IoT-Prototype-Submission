@@ -5,7 +5,7 @@ import streamlit_scrollable_textbox as stx
 
 # Setup MongoDB
 MONGO_API_KEY = st.secrets["MONGO_API_KEY"]
-client = MongoClient(f"mongodb+srv://pemburu_mimpi:{MONGO_API_KEY}@cluster0.asss8ea.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+client = MongoClient("mongodb+srv://pemburu_mimpi:{MONGO_API_KEY}@cluster0.asss8ea.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client["MyDatabase"]
 collection = db["AudioCollection"]
 
@@ -25,16 +25,15 @@ else:
 
   # untuk memilih audio
   filenames = [doc['filename'] for doc in docs]
-  selected_filename = st.sidebar.selectbox("Pilih file", filenames) 
+  selected_filename = st.sidebar.selectbox("Pilih file", filenames)  
   selected_doc = next((doc for doc in docs if doc["filename"] == selected_filename), None)
 
+  #untuk desain streamlit
   if selected_doc:
     st.markdown(f"🕒 Timestamp: {selected_doc['timestamp']}")
     st.markdown(f"📝Ringkasan: {selected_doc['filename']}")
     st.markdown(f"Link Audio: {selected_doc['drive_url']}")
     
-
-    #st.audio((f"https://drive.google.com/uc?export=download&id={selected_doc['drive_url'].split('/d/')[1].split('/')[0]}", format="audio/wav"))
 
     st.image("gambar2.png", width=300)
 

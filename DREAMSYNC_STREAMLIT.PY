@@ -5,7 +5,7 @@ import streamlit_scrollable_textbox as stx
 
 # Setup MongoDB
 MONGO_API_KEY = st.secrets["MONGO_API_KEY"]
-client = MongoClient("mongodb+srv://pemburu_mimpi:{MONGO_API_KEY}@cluster0.asss8ea.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+client = MongoClient(f"mongodb+srv://pemburu_mimpi:{MONGO_API_KEY}@cluster0.asss8ea.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client["MyDatabase"]
 collection = db["AudioCollection"]
 

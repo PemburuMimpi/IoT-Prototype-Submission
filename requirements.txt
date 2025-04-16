@@ -1,3 +1,5 @@
 streamlit
 pymongo
 pandas
+requests
+base64

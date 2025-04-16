@@ -1,6 +1,8 @@
 import streamlit as st # untuk streamlit
 from pymongo import MongoClient #untuk MongoDB
 import pandas as pd # memanipulasi/analisis data
+import requests  # untuk download file dari URL
+import base64  # untuk encode file audio ke base64
 
 # Setup MongoDB
 MONGO_API_KEY = st.secrets["MONGO_API_KEY"]
@@ -33,14 +35,22 @@ else:
         st.markdown(f"📝Ringkasan: {selected_doc['filename']}")
         st.markdown(f"Link Audio: {selected_doc['drive_url']}")
 
-        # === Embed audio file dari Google Drive ===
+        # === Embed audio file dari Google Drive (Base64 workaround) ===
         drive_url = selected_doc['drive_url']
         try:
             drive_id = drive_url.split('/d/')[1].split('/')[0]
             download_url = f"https://drive.google.com/uc?export=download&id={drive_id}"
-            st.audio(download_url, format="audio/wav")
-        except IndexError:
-            st.warning("🔗 Format URL Google Drive tidak valid.")
+
+            response = requests.get(download_url)
+            if response.status_code == 200:
+                audio_bytes = response.content
+                b64_audio = base64.b64encode(audio_bytes).decode()
+                st.audio(f"data:audio/wav;base64,{b64_audio}", format="audio/wav")
+            else:
+                st.warning("Gagal mengunduh audio dari Google Drive.")
+        except Exception as e:
+            st.warning("🔗 Format URL Google Drive tidak valid atau file tidak bisa diakses.")
+            st.error(f"Detail error: {e}")
 
         st.markdown("---")
         st.subheader("Transkrip")

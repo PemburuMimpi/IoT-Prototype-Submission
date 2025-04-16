@@ -33,9 +33,6 @@ else:
     st.markdown(f"🕒 Timestamp: {selected_doc['timestamp']}")
     st.markdown(f"📝Ringkasan: {selected_doc['filename']}")
     st.markdown(f"Link Audio: {selected_doc['drive_url']}")
-    
-
-    st.image("gambar2.png", width=300)
 
 
     st.markdown("---")

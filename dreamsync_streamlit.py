@@ -59,7 +59,7 @@ else:
             <div class="info-card">
                 <strong> 🕒 Timestamp: {selected_doc['timestamp']}<br>
                 <strong> 📝Ringkasan: {selected_doc['filename']}<br>
-                <strong> 🎧Link Audio: {selected_doc['drive_url']}" target="_blank">Buka Link</a>
+                <strong>🎧 Link Audio:</strong> <a href="{selected_doc['drive_url']}" target="_blank">Buka Link</a>
             </div>
         """, unsafe_allow_html=True)
 

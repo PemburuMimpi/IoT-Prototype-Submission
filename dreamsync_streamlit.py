@@ -35,7 +35,7 @@ else:
         st.markdown(f"📝Ringkasan: {selected_doc['filename']}")
         st.markdown(f"Link Audio: {selected_doc['drive_url']}")
 
-        # === Embed audio file dari Google Drive (Base64 workaround) ===
+        # === Embed audio file dari Google Drive (pake base64) ===
         drive_url = selected_doc['drive_url']
         try:
             drive_id = drive_url.split('/d/')[1].split('/')[0]

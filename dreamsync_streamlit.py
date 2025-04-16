@@ -10,7 +10,7 @@ collection = db["AudioCollection"]
 
 # Judul Halaman
 st.set_page_config(page_title="DREAMSYNC'S Ringkasan Audio AI", layout="centered")
-st.title("DREAMSYNC'Summaries!:open_book:")
+st.title("DREAMSYNC'S Summaries!:open_book:")
 st.markdown("*Sensor:* INMP441 | *Transkrip:* Whisper | *Ringkasan:* Gemini AI")
 
 # Ambil data dari MongoDB
@@ -33,6 +33,14 @@ else:
         st.markdown(f"📝Ringkasan: {selected_doc['filename']}")
         st.markdown(f"Link Audio: {selected_doc['drive_url']}")
 
+        # === Embed audio file dari Google Drive ===
+        drive_url = selected_doc['drive_url']
+        try:
+            drive_id = drive_url.split('/d/')[1].split('/')[0]
+            download_url = f"https://drive.google.com/uc?export=download&id={drive_id}"
+            st.audio(download_url, format="audio/wav")
+        except IndexError:
+            st.warning("🔗 Format URL Google Drive tidak valid.")
 
         st.markdown("---")
         st.subheader("Transkrip")

@@ -55,9 +55,13 @@ else:
 
     #untuk desain streamlit
     if selected_doc:
-        st.markdown(f"🕒 Timestamp: {selected_doc['timestamp']}")
-        st.markdown(f"📝Ringkasan: {selected_doc['filename']}")
-        st.markdown(f"🎧Link Audio: {selected_doc['drive_url']}")
+        st.markdown(f"""
+            <div class="info-card">
+                <strong> 🕒 Timestamp: {selected_doc['timestamp']}<br>
+                <strong> 📝Ringkasan: {selected_doc['filename']}<br>
+                <strong> 🎧Link Audio: {selected_doc['drive_url']}" target="_blank">Buka Link</a>
+            </div>
+        """, unsafe_allow_html=True)
 
         # === Embed audio file dari Google Drive (pake base64) ===
         drive_url = selected_doc['drive_url']

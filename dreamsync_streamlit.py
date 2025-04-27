@@ -1,8 +1,8 @@
-import streamlit as st # untuk streamlit
-from pymongo import MongoClient #untuk MongoDB
-import pandas as pd # memanipulasi/analisis data
-import requests  # untuk download file dari URL
-import base64  # untuk encode file audio ke base64
+import streamlit as st
+from pymongo import MongoClient
+import requests
+import base64
+import os
 
 # Setup MongoDB
 MONGO_API_KEY = st.secrets["MONGO_API_KEY"]
@@ -37,33 +37,33 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("DREAMSYNC'S Summaries!:open_book:")
-st.markdown("*Sensor:* INMP441 | *Transkrip:* Whisper | *Ringkasan:* Gemini AI  | *Fact Check :* Hugging Face T5")
+# Title
+st.title("📚 DREAMSYNC'S Summaries!")
+st.markdown("*Sensor:* INMP441 | *Transkrip:* Whisper | *Ringkasan:* Gemini AI | *Fact-Check:* Hugging Face T5")
 
-# Ambil data dari MongoDB
+# Load Data
 docs = list(collection.find().sort("timestamp", -1))
 
 if not docs:
     st.warning("🚫 Belum ada data di database")
 else:
-    st.header("💻 Data Rekaman")
+    st.header("🎧 Data Rekaman")
 
-    # untuk memilih audio
+    # Pilih file
     filenames = [doc['filename'] for doc in docs]
-    selected_filename = st.sidebar.selectbox("Pilih file", filenames)  
+    selected_filename = st.sidebar.selectbox("Pilih file rekaman", filenames)
     selected_doc = next((doc for doc in docs if doc["filename"] == selected_filename), None)
 
-    #untuk desain streamlit
     if selected_doc:
         st.markdown(f"""
             <div class="info-card">
-                <strong> 🕒 Timestamp: {selected_doc['timestamp']}<br>
-                <strong> 📝Ringkasan: {selected_doc['filename']}<br>
-                <strong>🎧 Link Audio:</strong> <a href="{selected_doc['drive_url']}" target="_blank">Buka Link</a>
+                <strong>🕒 Timestamp:</strong> {selected_doc['timestamp']}<br>
+                <strong>📄 File:</strong> {selected_doc['filename']}<br>
+                <strong>🔗 Link Google Drive:</strong> <a href="{selected_doc['drive_url']}" target="_blank">Buka Link</a>
             </div>
         """, unsafe_allow_html=True)
 
-        # === Embed audio file dari Google Drive (pake base64) ===
+        # === Embed Audio ===
         drive_url = selected_doc['drive_url']
         try:
             drive_id = drive_url.split('/d/')[1].split('/')[0]
@@ -75,29 +75,39 @@ else:
                 b64_audio = base64.b64encode(audio_bytes).decode()
                 st.audio(f"data:audio/wav;base64,{b64_audio}", format="audio/wav")
             else:
-                st.warning("Gagal mengunduh audio dari Google Drive.")
+                st.warning("⚠️ Gagal mengunduh audio dari Google Drive.")
         except Exception as e:
-            st.warning("🔗 Format URL Google Drive tidak valid atau file tidak bisa diakses.")
+            st.warning("⚠️ Format URL Google Drive tidak valid atau file tidak bisa diakses.")
             st.error(f"Detail error: {e}")
 
+        # === Transkrip ===
         st.markdown("---")
-        st.subheader("📜Transkrip")
+        st.subheader("📜 Transkrip")
         st.write(selected_doc['transcript'])
 
+        # === Ringkasan ===
         st.markdown("---")
-        st.subheader("📝Ringkasan")
-        st.markdown(
-            f"""
-            <div style='overflow-y: scroll; height: 250px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9'>
-                {selected_doc['summary']}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        
+        st.subheader("📝 Ringkasan")
+        if isinstance(selected_doc['summary'], list):
+            st.markdown("<div class='scroll-box'>", unsafe_allow_html=True)
+            for point in selected_doc['summary']:
+                st.write(f"• {point}")
+            st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            st.info("Ringkasan belum tersedia untuk file ini.")
+
+        # === Fact-Check ===
         st.markdown("---")
-        st.subheader("❌✅ Hasil Fact Check")
-        for item in selected_doc['fact_check']:
-            st.markdown(f"* 👉 Claim:* {item['claim']}")
-            st.markdown(f"> 💡 {item['explanation']}")
-            st.markdown("---")
+        st.subheader("❌✅ Hasil Fact-Check")
+        if isinstance(selected_doc['fact_check'], list):
+            for item in selected_doc['fact_check']:
+                st.markdown(f"""
+                    <div class="info-card">
+                        <strong>👉 Klaim:</strong> {item.get('claim', '-')}\n
+                        <strong>✅ Status:</strong> {item.get('status', '-')}\n
+                        <strong>💬 Penjelasan:</strong> {item.get('explanation', '-')}\n
+                        <strong>🔗 Sumber:</strong> <a href="{item.get('source', '#')}" target="_blank">{item.get('source', '(tidak tersedia)')}</a>
+                    </div>
+                """, unsafe_allow_html=True)
+        else:
+            st.info("Fact-check belum tersedia untuk file ini.")

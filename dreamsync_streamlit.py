@@ -85,20 +85,13 @@ else:
         st.write(selected_doc['transcript'])
 
         st.markdown("---")
-        st.subheader("📝Ringkasan")
+        st.subheader("📝Ringkasan + Fact Check")
         st.markdown(
             f"""
-            <div style='overflow-y: scroll; height: 250px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9'>
+            <div style='overflow-y: scroll; height: 400px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background-color: #f9f9f9'>
                 {selected_doc['summary']}
             </div>
             """,
             unsafe_allow_html=True
         )
         
-        st.markdown("---")
-        st.subheader("❌✅ Hasil Fact Check")
-        for item in selected_doc['fact_check']:
-            st.markdown(f"* 👉 Claim:* {item['claim']}")
-            st.markdown(f"> 💡 {item['explanation']}")
-            st.markdown("---")
-
